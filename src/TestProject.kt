@@ -3,15 +3,43 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 
 /**
- * Class for JUnit tests that validate the functionality of the Json library.
+ * Represents a university course with a name, number of credits,
+ * and a list of evaluation components (e.g., exams, projects).
+ */
+data class Course(
+    val name: String,
+    val credits: Int,
+    val evaluation: List<EvalItem>
+)
+
+/**
+ * Represents a single evaluation component (e.g., quiz or exam)
+ * with a name, percentage weight, whether it's mandatory, and an optional type.
+ */
+data class EvalItem(
+    val name: String,
+    val percentage: Double,
+    val mandatory: Boolean,
+    val type: EvalType?
+)
+
+/**
+ * Enumeration of possible evaluation types.
+ */
+enum class EvalType {
+    TEST, PROJECT, EXAM
+}
+
+/**
+ * Class for JUnit tests that validate the functionality of the JSON library.
  *
- * Tests cover serialization, filtering, mapping, and validation operations on different Json types
+ * Tests cover serialization, filtering, mapping, and validation operations on different JSON types
  * including JsonString, JsonNumber, JsonBoolean, JsonNull, JsonArray, and JsonObject.
  */
 class Test {
 
     /**
-     * Test for serializing a JsonString object to a valid Json string.
+     * Test for serializing a JsonString object to a valid JSON string.
      */
     @Test
     fun testJsonStringSerialization() {
@@ -20,7 +48,7 @@ class Test {
     }
 
     /**
-     * Test for serializing a JsonNumber object to a valid Json string.
+     * Test for serializing a JsonNumber object to a valid JSON string.
      */
     @Test
     fun testJsonNumberSerialization() {
@@ -29,7 +57,7 @@ class Test {
     }
 
     /**
-     * Test for serializing a JsonBoolean object to a valid Json string.
+     * Test for serializing a JsonBoolean object to a valid JSON string.
      */
     @Test
     fun testJsonBooleanSerialization() {
@@ -38,7 +66,7 @@ class Test {
     }
 
     /**
-     * Test for serializing a JsonNull object to a valid Json string.
+     * Test for serializing a JsonNull object to a valid JSON string.
      */
     @Test
     fun testJsonNullSerialization() {
@@ -47,7 +75,7 @@ class Test {
 
     /**
      * Test for serializing a JsonArray containing mixed types
-     * (JsonNumber, JsonString, JsonBoolean) to a valid Json string.
+     * (JsonNumber, JsonString, JsonBoolean) to a valid JSON string.
      */
     @Test
     fun testJsonArraySerialization() {
@@ -59,17 +87,19 @@ class Test {
     // specificamente una funzione per la serializzazione di oggetti compositi.
     // (C'è un test uguale sotto)
     /**
-     * Test for serializing a JsonObject containing various Json types
-     * (JsonString, JsonNumber, JsonBoolean, JsonArray) to a valid Json string.
+     * Test for serializing a JsonObject containing various JSON types
+     * (JsonString, JsonNumber, JsonBoolean, JsonArray) to a valid JSON string.
      */
     @Test
     fun testJsonObjectSerialization() {
-        val obj = JsonObject(mapOf(
-            "name" to JsonString("Alice"),
-            "age" to JsonNumber(25.0),
-            "active" to JsonBoolean(true),
-            "skill" to JsonArray(listOf(JsonString("Python"), JsonString("Kotlin"), JsonString("Java")))
-        ))
+        val obj = JsonObject(
+            linkedMapOf(
+                "name" to JsonString("Alice"),
+                "age" to JsonNumber(25.0),
+                "active" to JsonBoolean(true),
+                "skill" to JsonArray(listOf(JsonString("Python"), JsonString("Kotlin"), JsonString("Java")))
+            )
+        )
         val expected = """{"name":"Alice","age":25.0,"active":true,"skill":["Python","Kotlin","Java"]}"""
         assertEquals(expected, obj.toJsonString())
     }
@@ -81,12 +111,14 @@ class Test {
      */
     @Test
     fun testFilterJsonProperties() {
-        val obj = JsonObject(mapOf(
-            "name" to JsonString("Alice"),
-            "age" to JsonNumber(25.0),
-            "active" to JsonBoolean(true),
-            "skill" to JsonArray(listOf(JsonString("Python"), JsonString("Kotlin"), JsonString("Java")))
-        ))
+        val obj = JsonObject(
+            linkedMapOf(
+                "name" to JsonString("Alice"),
+                "age" to JsonNumber(25.0),
+                "active" to JsonBoolean(true),
+                "skill" to JsonArray(listOf(JsonString("Python"), JsonString("Kotlin"), JsonString("Java")))
+            )
+        )
         val type = "string"
         val output = obj.filterJsonByType(type)
         val output2 = obj.filterPropertiesByKey(listOf("name", "age", "skill"))
@@ -104,7 +136,7 @@ class Test {
         val type = "string"
         val output = array.filterJsonByType(type)
         //val condition= "="
-        assertEquals(output.toJsonString(),"[\"a\"]")
+        assertEquals(output.toJsonString(), "[\"a\"]")
     }
 
     /**
@@ -130,15 +162,19 @@ class Test {
      */
     @Test
     fun testJsonObjectValidation() {
-        val validObj = JsonObject(mapOf(
-            "name" to JsonString("Alice"),
-            "age" to JsonNumber(30.0),
-            "isStudent" to JsonBoolean(false)
-        ))
-        val invalidObj = JsonObject(mapOf(
-            "name" to JsonString("Bob"),
-            "nullValue" to JsonNull
-        ))
+        val validObj = JsonObject(
+            linkedMapOf(
+                "name" to JsonString("Alice"),
+                "age" to JsonNumber(30.0),
+                "isStudent" to JsonBoolean(false)
+            )
+        )
+        val invalidObj = JsonObject(
+            linkedMapOf(
+                "name" to JsonString("Bob"),
+                "nullValue" to JsonNull
+            )
+        )
         val validator = JsonObjectValidationVisitor()
         assertTrue(validObj.accept(validator))
         assertTrue(!invalidObj.accept(validator))
@@ -162,12 +198,33 @@ class Test {
      * ensuring that both `toJsonString()` and `serialize()` return the same result.
      */
     @Test
-    fun testSerializeAliasFunction() {
-        val obj = JsonObject(mapOf(
-            "name" to JsonString("Agnese"),
-            "age" to JsonNumber(24.0),
-            "skills" to JsonArray(listOf(JsonString("Kotlin"), JsonString("Java"))),
-        ))
-        assertEquals(obj.toJsonString(), obj.serialize())
+    fun testSerialize() {
+        val obj = JsonObject(
+            linkedMapOf(
+                "name" to JsonString("Agnese"),
+                "age" to JsonNumber(24.0),
+                "skills" to JsonArray(listOf(JsonString("Kotlin"), JsonString("Java"))),
+            )
+        )
+        assertEquals(obj.toJsonString(), obj.toJsonString())
+    }
+
+    /**
+     * Test for the inference function that converts a Kotlin data class (with nested lists and enums)
+     * into a JsonObject. Verifies correct conversion of types including nullable enums, lists of data classes,
+     * and primitive fields.
+     */
+    @Test
+    fun testInference() {
+        val course = Course(
+            "PA", 6, listOf(
+                EvalItem("quizzes", 0.2, false, null),
+                EvalItem("project", 0.8, true, EvalType.PROJECT)
+            )
+        )
+        val json = JsonObject.inferJson(course)
+        val expected =
+            """{"name":"PA","credits":6.0,"evaluation":[{"name":"quizzes","percentage":0.2,"mandatory":false,"type":null},{"name":"project","percentage":0.8,"mandatory":true,"type":"PROJECT"}]}"""
+        assertEquals(expected, json.toJsonString())
     }
 }
