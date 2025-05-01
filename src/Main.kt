@@ -59,24 +59,29 @@ data class JsonArray(val elements: List<JsonValue>) : JsonValue() {
         }
         return  JsonArray(filteredElements)
     }
-    fun mapNumbers(transform: (Double) -> Double): JsonArray =
-        JsonArray(elements.map {
-            if (it is JsonNumber) JsonNumber(transform(it.value)) else it
-        })
 
-    // Mapping generico sulle stringhe
-    fun mapStrings(transform: (String) -> String): JsonArray =
-        JsonArray(elements.map {
-            if (it is JsonString) JsonString(transform(it.value)) else it
-        })
+    companion object  {
+        // Function to convert a list in a JsonArray
+        fun fromList(list: List<Any?>): JsonArray {
+            val jsonValues = list.map { value ->
+                when (value) {
+                    is String -> JsonString(value)
+                    is Number -> JsonNumber(value.toDouble())
+                    is Boolean -> JsonBoolean(value)
+                    is List<*> -> fromList(value)
+                    null -> JsonNull
+                    else -> throw IllegalArgumentException("Unsupported type: ${value::class.simpleName}")
+                }
+            }
+            return JsonArray(jsonValues)
+        }
+    }
 
-    fun multiplyBy(factor: Double): JsonArray = mapNumbers { it * factor }
-    fun divideBy(divisor: Double): JsonArray = mapNumbers { it / divisor }
-
-    // Operazioni predefinite sulle stringhe
-    fun toUpperCase(): JsonArray = mapStrings { it.uppercase() }
-    fun toLowerCase(): JsonArray = mapStrings { it.lowercase() }
-    fun capitalizeEach(): JsonArray = mapStrings { it.replaceFirstChar { c -> c.uppercase() } }
+    // Map function
+    fun mapList(operation: (JsonValue) -> JsonValue): JsonArray {
+        val mappedElements = elements.map { operation(it) }
+        return JsonArray(mappedElements)
+    }
 }
 
 // JSON Object

@@ -70,16 +70,15 @@ class Test{
     }
 
     @Test
-    fun testMappingArray(){
-        val numberArray = JsonArray(listOf(JsonNumber(1.0),JsonString("cane"), JsonNumber(2.0), JsonNumber(3.0)))
-        val stringArray= JsonArray(listOf(JsonString("ciao"), JsonString("cane"), JsonString("a")))
-
-        val multipliedArray = numberArray.multiplyBy(2.0)
-        val uppercaseArray = stringArray.toUpperCase()
-
-        assertEquals(multipliedArray.toJsonString(),"[2.0,\"cane\",4.0,6.0]")
-        assertEquals(uppercaseArray.toJsonString(),"[\"CIAO\",\"CANE\",\"A\"]")
-
-        val list = listOf(1,2,3)
+    fun testMappingArray() {
+        val list = JsonArray.fromList(listOf(1, 2, 3))
+        val mapped = list.mapList { jsonValue ->
+            if (jsonValue is JsonNumber) {
+                JsonNumber(jsonValue.value * 2)
+            } else {
+                jsonValue
+            }
+        }
+        assertEquals("[2.0,4.0,6.0]", mapped.toJsonString())
     }
 }
