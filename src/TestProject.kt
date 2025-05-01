@@ -81,4 +81,31 @@ class Test{
         }
         assertEquals("[2.0,4.0,6.0]", mapped.toJsonString())
     }
+
+    // Visitor test
+    @Test
+    fun testJsonObjectValidation() {
+        val validObj = JsonObject(mapOf(
+            "name" to JsonString("Alice"),
+            "age" to JsonNumber(30.0),
+            "isStudent" to JsonBoolean(false)
+        ))
+        val invalidObj = JsonObject(mapOf(
+            "name" to JsonString("Bob"),
+            "nullValue" to JsonNull
+        ))
+        val validator = JsonObjectValidationVisitor()
+        assertTrue(validObj.accept(validator))
+        assertTrue(!invalidObj.accept(validator))
+    }
+
+    // Visitor test
+    @Test
+    fun testJsonArrayHomogeneity() {
+        val validArray = JsonArray(listOf(JsonString("a"), JsonString("b"), JsonString("c")))
+        val invalidArray = JsonArray(listOf(JsonString("a"), JsonNumber(1.0), JsonBoolean(true)))
+        val checker = JsonArrayHomogeneityVisitor()
+        assertTrue(validArray.accept(checker))
+        assertTrue(!invalidArray.accept(checker))
+    }
 }

@@ -59,7 +59,11 @@ data class JsonArray(val elements: List<JsonValue>) : JsonValue() {
         }
         return  JsonArray(filteredElements)
     }
-
+    // Map function
+    fun mapList(operation: (JsonValue) -> JsonValue): JsonArray {
+        val mappedElements = elements.map { operation(it) }
+        return JsonArray(mappedElements)
+    }
     companion object  {
         // Function to convert a list in a JsonArray
         fun fromList(list: List<Any?>): JsonArray {
@@ -75,12 +79,6 @@ data class JsonArray(val elements: List<JsonValue>) : JsonValue() {
             }
             return JsonArray(jsonValues)
         }
-    }
-
-    // Map function
-    fun mapList(operation: (JsonValue) -> JsonValue): JsonArray {
-        val mappedElements = elements.map { operation(it) }
-        return JsonArray(mappedElements)
     }
 }
 
@@ -110,10 +108,36 @@ data class JsonObject(val properties: Map<String, JsonValue>) : JsonValue() {
     }
 }
 
-/*
-* Il secondo punto del progetto riguarda il filtraggio delle strutture JSON in memoria,
-* ossia la capacità di selezionare o escludere elementi da un oggetto JSON (JsonObject)
-* o da un array JSON (JsonArray), creando nuove istanze con gli elementi che soddisfano
-* un certo criterio di filtro, senza modificare l'originale.
-* */
+// Visitor for the JSON objects validation
+class JsonObjectValidationVisitor : JsonVisitor<Boolean> {
+    override fun visitObject(obj: JsonObject): Boolean {
+        val keys = obj.properties.keys
+        if (keys.size != keys.toSet().size) return false
+        return obj.properties.values.all { it.accept(this) }
+    }
+    override fun visitArray(array: JsonArray): Boolean {
+        return array.elements.all { it.accept(this) }
+    }
+    override fun visitString(string: JsonString): Boolean = true
+    override fun visitNumber(number: JsonNumber): Boolean = true
+    override fun visitBoolean(boolean: JsonBoolean): Boolean = true
+    override fun visitNull(nullValue: JsonNull): Boolean = false
+}
+
+// Visitor to check if all JSON Arrays contain values of the same type
+class JsonArrayHomogeneityVisitor : JsonVisitor<Boolean> {
+    override fun visitArray(array: JsonArray): Boolean {
+        val nonNullElements = array.elements.filter { it !is JsonNull }
+        if (nonNullElements.isEmpty()) return true
+        val firstType = nonNullElements.first()::class
+        return nonNullElements.all { it::class == firstType && it.accept(this) }
+    }
+    override fun visitObject(obj: JsonObject): Boolean {
+        return obj.properties.values.all { it.accept(this) }
+    }
+    override fun visitString(string: JsonString): Boolean = true
+    override fun visitNumber(number: JsonNumber): Boolean = true
+    override fun visitBoolean(boolean: JsonBoolean): Boolean = true
+    override fun visitNull(nullValue: JsonNull): Boolean = true
+}
 
