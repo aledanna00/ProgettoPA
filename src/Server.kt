@@ -7,9 +7,6 @@ import java.net.InetSocketAddress
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
-import Mapping
-import Path
-import Param
 
 /**
  * Commento
@@ -107,7 +104,7 @@ class GetJson(vararg controller: KClass<*>) {
             val result = route.method.callBy(
                 mapOf(route.method.parameters.first() to route.controllerInstance) + args
             )
-            return JsonObject.inferJson(result).toJsonString()
+            return inferJson(result).toJsonString()
         }
         return """{"error":"Not found"}"""/* Routing logic */
     }
