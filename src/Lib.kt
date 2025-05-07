@@ -91,23 +91,6 @@ data class JsonArray(val elements: List<JsonValue>) : JsonValue() {
      */
     override fun <R> accept(visitor: JsonVisitor<R>): R = visitor.visitArray(this)
     /**
-     * Filters the array by element type.
-     * @param condition The type name ("string", "number", "boolean", "array", "null").
-     */
-    fun filterJsonByType(condition: String):JsonArray{
-        val filteredElements= elements.filter { entry ->
-            when (condition){
-                "string"-> entry is JsonString
-                "number"-> entry is JsonNumber
-                "boolean"-> entry is JsonBoolean
-                "array"-> entry is JsonArray
-                "null"-> entry is JsonNull
-                else-> false
-            }
-        }
-        return  JsonArray(filteredElements)
-    }
-    /**
      * Applies a transformation to each element in the array.
      * @param operation Function to transform each JsonValue.
      */
