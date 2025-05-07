@@ -101,7 +101,6 @@ class Test {
         assertEquals(expected, obj.toJsonString())
     }
 
-    // Da sistemare
     /**
      * Test for filtering a JsonObject based on a specified type ("string").
      * Also tests filtering properties by keys.
@@ -129,7 +128,8 @@ class Test {
      */
     @Test
     fun testMappingArray() {
-        val list = JsonArray.fromList(listOf(1, 2, 3))
+        val list = inferJson(listOf(1, 2, 3)) as JsonArray
+        //println(list::class.qualifiedName)
         val mapped = list.mapList { jsonValue ->
             if (jsonValue is JsonNumber) {
                 JsonNumber(jsonValue.value * 2)
@@ -206,9 +206,34 @@ class Test {
                 EvalItem("project", 0.8, true, EvalType.PROJECT)
             )
         )
-        val json = JsonObject.inferJson(course)
-        val expected =
-            """{"name":"PA","credits":6.0,"evaluation":[{"name":"quizzes","percentage":0.2,"mandatory":false,"type":null},{"name":"project","percentage":0.8,"mandatory":true,"type":"PROJECT"}]}"""
-        assertEquals(expected, json.toJsonString())
+        val json = inferJson(course)
+        val expected= JsonObject(
+            linkedMapOf(
+                "name" to JsonString("PA"),
+                "credits" to JsonNumber(6.0),
+                "evaluation" to JsonArray(
+                    listOf(
+                        JsonObject(
+                            linkedMapOf(
+                                "name" to JsonString("quizzes"),
+                                "percentage" to JsonNumber(0.2),
+                                "mandatory" to JsonBoolean(false),
+                                "type" to JsonNull
+                            )
+            ),
+                        JsonObject(
+                            linkedMapOf(
+                                "name" to JsonString("project"),
+                                "percentage" to JsonNumber(0.8),
+                                "mandatory" to JsonBoolean(true),
+                                "type" to JsonString("PROJECT")
+                            )
+                        )
+        )
+                )
+            )
+        )
+
+        assertEquals(expected, json)
     }
 }

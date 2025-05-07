@@ -17,14 +17,15 @@ import kotlin.reflect.jvm.isAccessible
  * Visitor interface for traversing JSON values.
  * @param R The return type for the visitor's operations.
  */
-interface JsonVisitor<R> {
-    fun visitObject(obj: JsonObject): R
-    fun visitArray(array: JsonArray): R
-    fun visitString(string: JsonString): R
-    fun visitNumber(number: JsonNumber): R
-    fun visitBoolean(boolean: JsonBoolean): R
-    fun visitNull(nullValue: JsonNull): R
+interface JsonVisitor {
+    fun visitObject(obj: JsonObject): Boolean
+    fun visitArray(array: JsonArray): Boolean
+    fun visitString(string: JsonString): Boolean
+    fun visitNumber(number: JsonNumber): Boolean
+    fun visitBoolean(boolean: JsonBoolean): Boolean
+    fun visitNull(nullValue: JsonNull): Boolean
 }
+
 
 /**
  * Base class for all JSON value types.
@@ -38,7 +39,7 @@ abstract class JsonValue {
      * Accepts a visitor to process the JSON value.
      * @param visitor A JsonVisitor instance.
      */
-    abstract fun <R> accept(visitor: JsonVisitor<R>): R
+    abstract fun accept(visitor: JsonVisitor): Boolean
 }
 
 /**
@@ -47,7 +48,7 @@ abstract class JsonValue {
  */
 data class JsonString(val value: String) : JsonValue() {
     override fun toJsonString(): String = "\"$value\""
-    override fun <R> accept(visitor: JsonVisitor<R>): R = visitor.visitString(this)
+    override fun accept(visitor: JsonVisitor): Boolean= visitor.visitString(this)
 }
 
 /**
@@ -56,7 +57,7 @@ data class JsonString(val value: String) : JsonValue() {
  */
 data class JsonNumber(val value: Double) : JsonValue() {
     override fun toJsonString(): String = value.toString()
-    override fun <R> accept(visitor: JsonVisitor<R>): R = visitor.visitNumber(this)
+    override fun accept(visitor: JsonVisitor): Boolean = visitor.visitNumber(this)
 }
 
 /**
@@ -65,7 +66,7 @@ data class JsonNumber(val value: Double) : JsonValue() {
  */
 data class JsonBoolean(val value: Boolean) : JsonValue() {
     override fun toJsonString(): String = value.toString()
-    override fun <R> accept(visitor: JsonVisitor<R>): R = visitor.visitBoolean(this)
+    override fun  accept(visitor: JsonVisitor): Boolean= visitor.visitBoolean(this)
 }
 
 /**
@@ -73,7 +74,7 @@ data class JsonBoolean(val value: Boolean) : JsonValue() {
  */
 object JsonNull : JsonValue() {
     override fun toJsonString(): String = "null"
-    override fun <R> accept(visitor: JsonVisitor<R>): R = visitor.visitNull(this)
+    override fun accept(visitor: JsonVisitor): Boolean = visitor.visitNull(this)
 }
 
 /**
@@ -89,7 +90,7 @@ data class JsonArray(val elements: List<JsonValue>) : JsonValue() {
     /**
      * Overrides the function "accept".
      */
-    override fun <R> accept(visitor: JsonVisitor<R>): R = visitor.visitArray(this)
+    override fun accept(visitor: JsonVisitor): Boolean = visitor.visitArray(this)
     /**
      * Applies a transformation to each element in the array.
      * @param operation Function to transform each JsonValue.
@@ -97,26 +98,6 @@ data class JsonArray(val elements: List<JsonValue>) : JsonValue() {
     fun mapList(operation: (JsonValue) -> JsonValue): JsonArray {
         val mappedElements = elements.map { operation(it) }
         return JsonArray(mappedElements)
-    }
-    companion object  {
-        /**
-         * Converts a Kotlin list to a JsonArray.
-         * @param list The list to convert.
-         * @throws IllegalArgumentException If an unsupported type is encountered.
-         */
-        fun fromList(list: List<Any?>): JsonArray {
-            val jsonValues = list.map { value ->
-                when (value) {
-                    is String -> JsonString(value)
-                    is Number -> JsonNumber(value.toDouble())
-                    is Boolean -> JsonBoolean(value)
-                    is List<*> -> fromList(value)
-                    null -> JsonNull
-                    else -> throw IllegalArgumentException("Unsupported type: ${value::class.simpleName}")
-                }
-            }
-            return JsonArray(jsonValues)
-        }
     }
 }
 
@@ -135,7 +116,7 @@ data class JsonObject(val properties: LinkedHashMap<String, JsonValue>) : JsonVa
     /**
      * Overrides the function "accept".
      */
-    override fun <R> accept(visitor: JsonVisitor<R>): R = visitor.visitObject(this)
+    override fun accept(visitor: JsonVisitor): Boolean = visitor.visitObject(this)
     /**
      * Filters properties by value type.
      * @param condition Type name to filter by.
@@ -161,65 +142,64 @@ data class JsonObject(val properties: LinkedHashMap<String, JsonValue>) : JsonVa
         val filteredMap = properties.filterKeys { it in keys }
         return JsonObject(java.util.LinkedHashMap(filteredMap))
     }
-    companion object {
-        /**
-         * Infers a JSON model from a supported Kotlin object using reflection.
-         *
-         * Supports: null, Int, Double, Boolean, String, Enums, Lists, Maps (with String keys), and data classes.
-         *
-         * @param any the Kotlin object to convert to a JsonValue
-         * @return a corresponding JsonValue representation
-         * @throws IllegalArgumentException if the object type is not supported
-         */
-        fun inferJson(any: Any?): JsonValue {
-            val inference: JsonValue = when (any) {
-                null -> JsonNull
-                is String -> JsonString(any)
-                is Int, is Double -> JsonNumber((any as Number).toDouble())
-                is Boolean -> JsonBoolean(any)
-                is Enum<*> -> JsonString(any.name)
-                is List<*> -> JsonArray(any.map { inferJson(it) })
-                is Map<*, *> -> {
-                    val mapEntries = LinkedHashMap<String, JsonValue>()
-                    any.entries.forEach { (k, v) ->
-                        if (k !is String) {
-                            throw IllegalArgumentException("Only maps with String keys are supported.")
-                        }
-                        mapEntries[k] = inferJson(v)
+}
+/**
+ * Infers a JSON model from a supported Kotlin object using reflection.
+ *
+ * Supports: null, Int, Double, Boolean, String, Enums, Lists, Maps (with String keys), and data classes.
+ *
+ * @param any the Kotlin object to convert to a JsonValue
+ * @return a corresponding JsonValue representation
+ * @throws IllegalArgumentException if the object type is not supported
+ */
+fun inferJson(any: Any?): JsonValue {
+        val inference: JsonValue = when (any) {
+            null -> JsonNull
+            is String -> JsonString(any)
+            is Int, is Double -> JsonNumber((any as Number).toDouble())
+            is Boolean -> JsonBoolean(any)
+            is Enum<*> -> JsonString(any.name)
+            is List<*> -> JsonArray(any.map { inferJson(it) })
+            is Map<*, *> -> {
+                val mapEntries = LinkedHashMap<String, JsonValue>()
+                any.entries.forEach { (k, v) ->
+                    if (k !is String) {
+                        throw IllegalArgumentException("Only maps with String keys are supported.")
                     }
-                    JsonObject(mapEntries)
+                    mapEntries[k] = inferJson(v)
                 }
-                else -> {
-                    val kClass = any::class
-                    if (kClass.isData) {
-                        val props = LinkedHashMap<String, JsonValue>()
-                        val constructor = kClass.primaryConstructor
-                            ?: throw IllegalArgumentException("Data class must have a primary constructor")
-                        constructor.parameters.forEach { param ->
-                            val name = param.name ?: return@forEach
-                            val value = kClass.memberProperties
-                                .first { it.name == name }
-                                .apply { isAccessible = true }
-                                .getter.call(any)
-                            props[name] = inferJson(value)
-                        }
-                        return JsonObject(props)
-                    } else {
-                        throw IllegalArgumentException("Unsupported type: ${any::class.simpleName}")
+                JsonObject(mapEntries)
+            }
+            else -> {
+                val kClass = any::class
+                if (kClass.isData) {
+                    val props = LinkedHashMap<String, JsonValue>()
+                    val constructor = kClass.primaryConstructor
+                        ?: throw IllegalArgumentException("Data class must have a primary constructor")
+                    constructor.parameters.forEach { param ->
+                        val name = param.name ?: return@forEach
+                        val value = kClass.memberProperties
+                            .first { it.name == name }
+                            .apply { isAccessible = true }
+                            .getter.call(any)
+                        props[name] = inferJson(value)
                     }
+                    return JsonObject(props)
+                } else {
+                    throw IllegalArgumentException("Unsupported type: ${any::class.simpleName}")
                 }
             }
-            return inference
         }
-    }
+        return inference
 }
+
 
 /**
  * Visitor to validate that:
  * - JSON objects have unique keys.
  * - Values do not contain JsonNull.
  */
-class JsonObjectValidationVisitor : JsonVisitor<Boolean> {
+class JsonObjectValidationVisitor : JsonVisitor{
     override fun visitObject(obj: JsonObject): Boolean {
         val keys = obj.properties.keys
         if (keys.size != keys.toSet().size) return false
@@ -237,7 +217,7 @@ class JsonObjectValidationVisitor : JsonVisitor<Boolean> {
 /**
  * Visitor to check if all elements of each JsonArray are of the same type.
  */
-class JsonArrayHomogeneityVisitor : JsonVisitor<Boolean> {
+class JsonArrayHomogeneityVisitor : JsonVisitor{
     override fun visitArray(array: JsonArray): Boolean {
         val nonNullElements = array.elements.filter { it !is JsonNull }
         if (nonNullElements.isEmpty()) return true
