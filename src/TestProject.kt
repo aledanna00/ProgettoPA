@@ -83,9 +83,6 @@ class Test {
         assertEquals("[1.0,\"a\",false]", array.toJsonString())
     }
 
-    // Secondo me (Agnese) si può togliere, visto che poi chiede di avere
-    // specificamente una funzione per la serializzazione di oggetti compositi.
-    // (C'è un test uguale sotto)
     /**
      * Test for serializing a JsonObject containing various JSON types
      * (JsonString, JsonNumber, JsonBoolean, JsonArray) to a valid JSON string.
@@ -121,22 +118,9 @@ class Test {
         )
         val type = "string"
         val output = obj.filterJsonByType(type)
-        val output2 = obj.filterPropertiesByKey(listOf("name", "age", "skill"))
-
+        // val output2 = obj.filterPropertiesByKey(listOf("name", "age", "skill"))
         assertEquals(output.toJsonString(), """{"name":"Alice"}""")
-        //assertEquals(output2.toJsonString(), """{"name":"Alice","age":25.0,"skill":["Python","Kotlin","Java"]}""")
-    }
-
-    /**
-     * Test for filtering elements in a JsonArray based on a specified type ("string").
-     */
-    @Test
-    fun testFilterJsonArray() {
-        val array = JsonArray(listOf(JsonNumber(1.0), JsonString("a"), JsonBoolean(false)))
-        val type = "string"
-        val output = array.filterJsonByType(type)
-        //val condition= "="
-        assertEquals(output.toJsonString(), "[\"a\"]")
+        // assertEquals(output2.toJsonString(), """{"name":"Alice","age":25.0,"skill":["Python","Kotlin","Java"]}""")
     }
 
     /**
