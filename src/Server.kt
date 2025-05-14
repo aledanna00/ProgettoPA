@@ -122,11 +122,17 @@ class GetJson(vararg controller: KClass<*>) {
 
 @Mapping("PA2025")
 class Controller {
-    @Mapping("ints")
-    fun demo(): List<Int> = listOf(1, 2, 3)
+    @Mapping("array")
+    fun array(): JsonArray{
+        val sentence= listOf("hello", "world", "!").map { JsonString(it) }
+        return JsonArray(sentence)
+    }
+/*
+    @Mapping("obj")
+    fun obj(): List<Int> = listOf(1, 2, 3)
 
     @Mapping("pair")
-    fun obj(): Pair<String, String> = Pair("um", "dois")
+    fun obj(): Pair<String, String> = Pair("um", "dois")*/
 
     @Mapping("path/{pathvar}")
     fun path(

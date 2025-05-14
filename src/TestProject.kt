@@ -37,14 +37,13 @@ enum class EvalType {
  * including JsonString, JsonNumber, JsonBoolean, JsonNull, JsonArray, and JsonObject.
  */
 class Test {
-
     /**
      * Test for serializing a JsonString object to a valid JSON string.
      */
     @Test
     fun testJsonStringSerialization() {
-        val s = JsonString("ciao")
-        assertEquals("\"ciao\"", s.toJsonString())
+        val s = JsonString("olà")
+        assertEquals("\"olà\"", s.toJsonString())
     }
 
     /**
