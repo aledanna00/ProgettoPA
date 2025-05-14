@@ -123,30 +123,91 @@ class GetJson(vararg controller: KClass<*>) {
 @Mapping("PA2025")
 class Controller {
     @Mapping("array")
-    fun array(): JsonArray{
-        val sentence= listOf("hello", "world", "!").map { JsonString(it) }
-        return JsonArray(sentence)
+    fun array(): String {
+        val sentence = listOf("hello", "world", "!")
+        val jsonArray = toJsonArray(sentence)
+        return jsonArray.toJsonString()
     }
-    /*
-        @Mapping("obj")
-        fun obj(): List<Int> = listOf(1, 2, 3)
 
-        @Mapping("pair")
-        fun obj(): Pair<String, String> = Pair("um", "dois")*/
+    @Mapping("obj")
+    fun obj(): JsonObject{
+        val person= linkedMapOf(
+            "name" to JsonString("Emily"),
+            "age" to JsonNumber(22.0),
+            "isStudent" to JsonBoolean(true)
+        )
+        return JsonObject(person)
+    }
 
     @Mapping("path/{pathvar}")
     fun path(
         @Path pathvar: String
-    ): String = pathvar + "!"
+    ): String {
+        if(pathvar=="obj"){
+            val person= linkedMapOf(
+                "name" to JsonString("Mark"),
+                "age" to JsonNumber(19.0),
+                "isStudent" to JsonBoolean(true)
+            )
+            return JsonObject(person).toJsonString()
+        } else if (pathvar== "array"){
+            val sentence= listOf("alternative", "array", "!").map { JsonString(it) }
+            return JsonArray(sentence).toJsonString()
+        } else{
+            return pathvar + " if you put 'obj' or 'array' you'll get an alternative output!"
+        }
+    }
 
     @Mapping("args")
     fun args(
-        @Param n: Int,
-        @Param text: String
-    ): Map<String, String> = mapOf(text to text.repeat(n))
+        @Param name: String,
+        @Param family: String
+    ): String{
+        if(name=="Mark"){
+            if (family== "mom"){
+                val person= linkedMapOf(
+                    "name" to JsonString("Caroline"),
+                    "age" to JsonNumber(46.0),
+                    "isStudent" to JsonBoolean(false)
+                )
+                return JsonObject(person).toJsonString()
+            }else if(family=="dad"){
+                val person= linkedMapOf(
+                    "name" to JsonString("Matt"),
+                    "age" to JsonNumber(50.0),
+                    "isStudent" to JsonBoolean(false)
+                )
+                return JsonObject(person).toJsonString()
+            }else {
+                return "Available family members are: 'mom' and 'dad'"
+            }
+
+        }else if(name== "Emily"){
+            if (family== "mom"){
+                val person= linkedMapOf(
+                    "name" to JsonString("Madeline"),
+                    "age" to JsonNumber(52.0),
+                    "isStudent" to JsonBoolean(false)
+                )
+                return JsonObject(person).toJsonString()
+            }else if(family=="dad"){
+                val person= linkedMapOf(
+                    "name" to JsonString("John"),
+                    "age" to JsonNumber(55.0),
+                    "isStudent" to JsonBoolean(false)
+                )
+                return JsonObject(person).toJsonString()
+            }else {
+                return "Available family members are: 'mom' and 'dad'"
+            }
+        }else{
+            return "Available names are: 'Giorgio' and 'Alessia'"
+        }
+    }
 }
 
 fun main() {
     val app = GetJson(Controller::class)
     app.start(8080)
+    println("Server avviato su http://localhost:")
 }
