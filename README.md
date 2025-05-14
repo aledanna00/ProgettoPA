@@ -75,3 +75,16 @@ println("Valid JSON? $isValid")
 val homogeneous = JsonArray(listOf(JsonString("a"), JsonString("b"))).accept(JsonArrayHomogeneityVisitor())
 println("Homogeneous? $homogeneous")  
 // Output: true
+
+```
+# Kotlin Framework
+
+In the file Server.kt we implemented an HTTP server in Kotlin using Java's built-in HttpServer, capable of handling GET requests with dynamic routing, path parameters, and query parameters. It also includes basic JSON serialization for response data.
+
+## Usage
+Firstly it is mandatory to open the connection with the server, so that it listens at port 8080. Below you can find: 
+1. The routes implemented
+2. The associated script
+3. Their output
+
+
