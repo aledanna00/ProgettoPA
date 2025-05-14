@@ -87,4 +87,98 @@ Firstly it is mandatory to open the connection with the server, so that it liste
 2. The associated script
 3. Their output
 
+http://localhost:8080/PA2025/array
 
+```kotlin
+@Mapping("array")
+    fun array(): String {
+        val sentence = listOf("hello", "world", "!")
+        val jsonArray = toJsonArray(sentence)
+        return jsonArray.toJsonString()
+    }
+```
+
+http://localhost:8080/PA2025/obj
+```kotlin
+@Mapping("obj")
+    fun obj(): String{
+        val person= linkedMapOf(
+            "name" to JsonString("Emily"),
+            "age" to JsonNumber(22.0),
+            "isStudent" to JsonBoolean(true)
+        )
+        return JsonObject(person).toJsonString()
+    }
+```
+
+http://localhost:8080/PA2025/path/obj
+```kotlin
+@Mapping("path/{pathvar}")
+    fun path(
+        @Path pathvar: String
+    ): String {
+        if(pathvar=="obj"){
+            val person= linkedMapOf(
+                "name" to JsonString("Mark"),
+                "age" to JsonNumber(19.0),
+                "isStudent" to JsonBoolean(true)
+            )
+            return JsonObject(person).toJsonString()
+        } else if (pathvar== "array"){
+            val sentence= listOf("alternative", "array", "!").map { JsonString(it) }
+            return JsonArray(sentence).toJsonString()
+        } else{
+            return pathvar + " if you put 'obj' or 'array' you'll get an alternative output!"
+        }
+    }
+```
+
+http://localhost:8080/PA2025/args?name=Mark&family=mom
+```kotlin
+@Mapping("args")
+    fun args(
+        @Param name: String,
+        @Param family: String
+    ): String{
+        if(name=="Mark"){
+            if (family== "mom"){
+                val person= linkedMapOf(
+                    "name" to JsonString("Caroline"),
+                    "age" to JsonNumber(46.0),
+                    "isStudent" to JsonBoolean(false)
+                )
+                return JsonObject(person).toJsonString()
+            }else if(family=="dad"){
+                val person= linkedMapOf(
+                    "name" to JsonString("Matt"),
+                    "age" to JsonNumber(50.0),
+                    "isStudent" to JsonBoolean(false)
+                )
+                return JsonObject(person).toJsonString()
+            }else {
+                return "Available family members are: 'mom' and 'dad'"
+            }
+        }else if(name== "Emily"){
+            if (family== "mom"){
+                val person= linkedMapOf(
+                    "name" to JsonString("Madeline"),
+                    "age" to JsonNumber(52.0),
+                    "isStudent" to JsonBoolean(false)
+                )
+                return JsonObject(person).toJsonString()
+            }else if(family=="dad"){
+                val person= linkedMapOf(
+                    "name" to JsonString("John"),
+                    "age" to JsonNumber(55.0),
+                    "isStudent" to JsonBoolean(false)
+                )
+                return JsonObject(person).toJsonString()
+            }else {
+                return "Available family members are: 'mom' and 'dad'"
+            }
+        }else{
+            return "Available names are: 'Giorgio' and 'Alessia'"
+        }
+    }
+}
+```
