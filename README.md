@@ -97,6 +97,10 @@ http://localhost:8080/PA2025/array
         return jsonArray.toJsonString()
     }
 ```
+The relative output is:
+```json
+"["hello","world","!"]"
+```
 
 http://localhost:8080/PA2025/obj
 ```kotlin
@@ -109,6 +113,10 @@ http://localhost:8080/PA2025/obj
         )
         return JsonObject(person).toJsonString()
     }
+```
+The relative output is:
+```json
+"{"name":"Emily","age":22.0,"isStudent":true}"
 ```
 
 http://localhost:8080/PA2025/path/obj
@@ -131,6 +139,10 @@ http://localhost:8080/PA2025/path/obj
             return pathvar + " if you put 'obj' or 'array' you'll get an alternative output!"
         }
     }
+```
+The relative output is:
+```json
+"{"name":"Mark","age":19.0,"isStudent":true}"
 ```
 
 http://localhost:8080/PA2025/args?name=Mark&family=mom
@@ -181,4 +193,8 @@ http://localhost:8080/PA2025/args?name=Mark&family=mom
         }
     }
 }
+```
+The relative output is:
+```json
+"{"name":"Caroline","age":46.0,"isStudent":false}"
 ```
