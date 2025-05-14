@@ -1,7 +1,3 @@
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.isAccessible
-
 /**
  * A Kotlin library for building and manipulating in-memory JSON structures.
  *
@@ -12,6 +8,10 @@ import kotlin.reflect.jvm.isAccessible
  *
  * Includes visitors for validating JSON object structure and checking array type homogeneity.
  */
+
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.isAccessible
 
 /**
  * Visitor interface for traversing JSON values.
