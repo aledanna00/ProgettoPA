@@ -127,12 +127,12 @@ class Controller {
         val sentence= listOf("hello", "world", "!").map { JsonString(it) }
         return JsonArray(sentence)
     }
-/*
-    @Mapping("obj")
-    fun obj(): List<Int> = listOf(1, 2, 3)
+    /*
+        @Mapping("obj")
+        fun obj(): List<Int> = listOf(1, 2, 3)
 
-    @Mapping("pair")
-    fun obj(): Pair<String, String> = Pair("um", "dois")*/
+        @Mapping("pair")
+        fun obj(): Pair<String, String> = Pair("um", "dois")*/
 
     @Mapping("path/{pathvar}")
     fun path(
