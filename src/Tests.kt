@@ -37,7 +37,6 @@ enum class EvalType {
  * including JsonString, JsonNumber, JsonBoolean, JsonNull, JsonArray, and JsonObject.
  */
 class Test {
-
     /**
      * Test for serializing a JsonString object to a valid JSON string.
      */
@@ -46,7 +45,6 @@ class Test {
         val s = JsonString("ciao")
         assertEquals("\"ciao\"", s.toJsonString())
     }
-
     /**
      * Test for serializing a JsonNumber object to a valid JSON string.
      */
@@ -55,7 +53,6 @@ class Test {
         val n = JsonNumber(3.14)
         assertEquals("3.14", n.toJsonString())
     }
-
     /**
      * Test for serializing a JsonBoolean object to a valid JSON string.
      */
@@ -64,7 +61,6 @@ class Test {
         val b = JsonBoolean(true)
         assertEquals("true", b.toJsonString())
     }
-
     /**
      * Test for serializing a JsonNull object to a valid JSON string.
      */
@@ -72,7 +68,6 @@ class Test {
     fun testJsonNullSerialization() {
         assertEquals("null", JsonNull.toJsonString())
     }
-
     /**
      * Test for serializing a JsonArray containing mixed types
      * (JsonNumber, JsonString, JsonBoolean) to a valid JSON string.
@@ -82,7 +77,6 @@ class Test {
         val array = JsonArray(listOf(JsonNumber(1.0), JsonString("a"), JsonBoolean(false)))
         assertEquals("[1.0,\"a\",false]", array.toJsonString())
     }
-
     /**
      * Test for serializing a JsonObject containing various JSON types
      * (JsonString, JsonNumber, JsonBoolean, JsonArray) to a valid JSON string.
@@ -100,7 +94,6 @@ class Test {
         val expected = """{"name":"Alice","age":25.0,"active":true,"skill":["Python","Kotlin","Java"]}"""
         assertEquals(expected, obj.toJsonString())
     }
-
     /**
      * Test for filtering a JsonObject based on a specified type ("string").
      * Also tests filtering properties by keys.
@@ -121,7 +114,6 @@ class Test {
         assertEquals(output.toJsonString(), """{"name":"Alice"}""")
         // assertEquals(output2.toJsonString(), """{"name":"Alice","age":25.0,"skill":["Python","Kotlin","Java"]}""")
     }
-
     /**
      * Test for the mapping function on a JsonArray.
      * The test multiplies numeric values by 2 and returns a new JsonArray.
@@ -139,7 +131,6 @@ class Test {
         }
         assertEquals("[2.0,4.0,6.0]", mapped.toJsonString())
     }
-
     /**
      * Test for the JsonObjectValidationVisitor to validate a JsonObject.
      * Ensures that all object properties and their types are valid.
@@ -163,7 +154,6 @@ class Test {
         assertTrue(validObj.accept(validator))
         assertTrue(!invalidObj.accept(validator))
     }
-
     /**
      * Test for the JsonArrayHomogeneityVisitor to check if all elements in a JsonArray are of the same type.
      * Ensures homogeneity of the array's elements.
@@ -176,7 +166,6 @@ class Test {
         assertTrue(validArray.accept(checker))
         assertTrue(!invalidArray.accept(checker))
     }
-
     /**
      * Test for the serialization alias function,
      * ensuring that both `toJsonString()` and `serialize()` return the same result.
@@ -192,7 +181,6 @@ class Test {
         )
         assertEquals(obj.toJsonString(), obj.toJsonString())
     }
-
     /**
      * Test for the inference function that converts a Kotlin data class (with nested lists and enums)
      * into a JsonObject. Verifies correct conversion of types including nullable enums, lists of data classes,
@@ -233,7 +221,16 @@ class Test {
                 )
             )
         )
-
         assertEquals(expected, json)
+    }
+    /**
+     * Test to verify that the `toJsonArray` function correctly converts a list of strings to a JSON array.
+     */
+    @Test
+    fun testToJsonArray() {
+        val input = listOf("hello", "world", "!")
+        val expectedJson = "[\"hello\",\"world\",\"!\"]"
+        val jsonArray = toJsonArray(input)
+        assertEquals(expectedJson, jsonArray.toJsonString())
     }
 }

@@ -193,6 +193,17 @@ fun inferJson(any: Any?): JsonValue {
         return inference
 }
 
+/**
+ * Converts any supported Kotlin object to a JsonString.
+ */
+fun toJsonArray(obj: Any?): JsonArray {
+    val jsonValue = inferJson(obj)
+    return when (jsonValue) {
+        is JsonArray -> jsonValue // Se è già un JsonArray, lo restituisci così com'è
+        else -> JsonArray(listOf(jsonValue)) // Altrimenti, lo metti in un JsonArray
+    }
+}
+
 
 /**
  * Visitor to validate that:
