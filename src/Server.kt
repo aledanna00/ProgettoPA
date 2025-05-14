@@ -209,5 +209,5 @@ class Controller {
 fun main() {
     val app = GetJson(Controller::class)
     app.start(8080)
-    println("Server avviato su http://localhost:")
+    println("Server running on http://localhost:8080")
 }
