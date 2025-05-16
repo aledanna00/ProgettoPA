@@ -10,7 +10,7 @@ A Kotlin library to build and manipulate in-memory JSON models with support for 
 - Infer JSON models from Kotlin data structures using reflection
 
 ## Library Class Diagram
-![ClassDiagram](https://github.com/aledanna00/ProgettoPA/blob/master/Class_diagram/ClassDiagram.drawio.png)
+![ClassDiagram](https://github.com/aledanna00/ProgettoPA/blob/master/Class_diagram/ClassDiagram.png)
 
 ## Installation
 
