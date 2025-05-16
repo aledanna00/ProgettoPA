@@ -12,10 +12,6 @@ A Kotlin library to build and manipulate in-memory JSON models with support for 
 ## Library Class Diagram
 ![ClassDiagram](https://github.com/aledanna00/ProgettoPA/blob/master/Class_diagram/ClassDiagram.png)
 
-## Installation
-
-Coming soon: JAR release.
-
 ## Usage
 
 ### 1. Building a JSON Object
@@ -84,6 +80,7 @@ println("Homogeneous? $homogeneous")
 # Kotlin Framework
 
 In the file Server.kt we implemented an HTTP server in Kotlin using Java's built-in HttpServer, capable of handling GET requests with dynamic routing, path parameters, and query parameters. It also includes basic JSON serialization for response data.
+The postman collection can be found in pa2025.postman_colection.json
 
 ## Usage
 Firstly it is mandatory to open the connection with the server, so that it listens at port 8080. Below you can find: 
@@ -202,3 +199,17 @@ The relative output is:
 ```json
 "{"name":"Caroline","age":46.0,"isStudent":false}"
 ```
+
+## File JAR
+A JAR file was created for the server. The main class defined in the manifest is `ServerKt`. It can be found in the package artifacts
+
+### Requirements
+
+- **Java 8** or higher installed
+
+### How to Run
+
+1. Open a terminal inside IntelliJ IDEA or your operating system.
+2. Navigate to the directory where the `ProgettoPA.jar` file is located.
+3.  Run the server using the command `java -jar ProgettoPA.jar`
+4.  If the server starts successfully, it will begin listening for incoming HTTP requests (on port 8080).
