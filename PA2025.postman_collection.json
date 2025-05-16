@@ -1,0 +1,114 @@
+{
+	"info": {
+		"_postman_id": "c1266bad-8072-4ff6-8801-19597c44cca6",
+		"name": "PA2025",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36690031",
+		"_collection_link": "https://galactic-crescent-291978.postman.co/workspace/PA2025~bfa5ac23-b4a3-47b8-8dd9-f7b7273b6aa4/collection/36690031-c1266bad-8072-4ff6-8801-19597c44cca6?action=share&source=collection_link&creator=36690031"
+	},
+	"item": [
+		{
+			"name": "Array",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/PA2025/array",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"PA2025",
+						"array"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Object",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/PA2025/obj",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"PA2025",
+						"obj"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Path",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/PA2025/path/{smth}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"PA2025",
+						"path",
+						"{smth}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Args",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/PA2025/args?name=Mark&family=mom",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"PA2025",
+						"args"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Mark"
+						},
+						{
+							"key": "family",
+							"value": "mom"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
