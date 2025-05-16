@@ -18,8 +18,8 @@ Coming soon: JAR release.
 
 ## Usage
 
+### 1. Building a JSON Object
 ```kotlin
-// 1. Building a JSON Object
 val obj = JsonObject(
     mapOf(
         "name" to JsonString("John"),
@@ -30,9 +30,10 @@ val obj = JsonObject(
 
 println(obj.toJsonString()) 
 // Output: {"name":"John","age":30.0,"active":true}
+```
 
-
-// 2. Filtering Properties by Keys
+### 2. Filtering Properties by Keys
+```kotlin
 val obj = JsonObject(
     mapOf(
         "name" to JsonString("John"),
@@ -44,9 +45,10 @@ val obj = JsonObject(
 val filtered = obj.filterPropertiesByKey(listOf("name", "student"))
 println(filtered.toJsonString())  
 // Output: {"name":"John"}
+```
 
-
-// 3. Mapping JSON Arrays
+### 3. Mapping JSON Arrays
+```kotlin
 val numbers = JsonArray.fromList(listOf(1, 2, 3))
 val doubled = numbers.mapList { value ->
     if (value is JsonNumber) JsonNumber(value.value * 2)
@@ -54,9 +56,10 @@ val doubled = numbers.mapList { value ->
 }
 println(doubled.toJsonString())  
 // Output: [2.0, 4.0, 6.0]
+```
 
-
-// 4. Object Validation
+### 4. Object Validation
+```kotlin
 val obj = JsonObject(
     mapOf(
         "name" to JsonString("John"),
@@ -69,9 +72,10 @@ val validator = JsonObjectValidationVisitor()
 val isValid = obj.accept(validator)
 println("Valid JSON? $isValid")  
 // Output: true (or false if invalid)
+```
 
-
-// 5. Array Homogeneity Check
+### 5. Array Homogeneity Check
+```kotlin
 val homogeneous = JsonArray(listOf(JsonString("a"), JsonString("b"))).accept(JsonArrayHomogeneityVisitor())
 println("Homogeneous? $homogeneous")  
 // Output: true
