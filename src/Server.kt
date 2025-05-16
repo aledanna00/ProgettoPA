@@ -231,7 +231,7 @@ class Controller {
                 return "Available family members are: 'mom' and 'dad'"
             }
         }else{
-            return "Available names are: 'Giorgio' and 'Alessia'"
+            return "Available names are: 'Mark' and 'Emily'"
         }
     }
 }
