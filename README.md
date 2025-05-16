@@ -80,7 +80,7 @@ println("Homogeneous? $homogeneous")
 # Kotlin Framework
 
 In the file Server.kt we implemented an HTTP server in Kotlin using Java's built-in HttpServer, capable of handling GET requests with dynamic routing, path parameters, and query parameters. It also includes basic JSON serialization for response data.
-The postman collection is [here](https://github.com/aledanna00/ProgettoPA/blob/master/PA2025.postman_collection.json)
+The postman collection is [here](https://github.com/aledanna00/ProgettoPA/blob/master/PA2025.postman_collection.json).
 
 ## Usage
 Firstly it is mandatory to open the connection with the server, so that it listens at port 8080. Below you can find: 
@@ -201,7 +201,7 @@ The relative output is:
 ```
 
 ## File JAR
-A JAR file was created for the server. The main class defined in the manifest is `ServerKt`. It can be found [here](https://github.com/aledanna00/ProgettoPA/blob/master/artifacts/ProgettoPA.jar )
+A JAR file was created for the server. The main class defined in the manifest is `ServerKt`. It can be found [here](https://github.com/aledanna00/ProgettoPA/blob/master/artifacts/ProgettoPA.jar ).
 
 ### Requirements
 
